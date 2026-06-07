@@ -1,0 +1,16 @@
+parameter_group,parameter_name,current_value,unit,source_type,source,calibration_status,confidence,recommended_action
+model,claimLevel,semi-quantitative,text,repository,default_res2_params.m,current,high,Keep explicit claim boundary in all generated reports
+symmetry,Pz_parity,odd under polar-state reversal,text,theory,Ji Xu and Xiang PRL 130 146801 2023 / arXiv 2210.16542,to_implement,high,Add symmetry parity check for Pz and all current components
+free_energy,U_registry_fourier,dimensionless,text,model,Current Fourier registry potential,to_calibrate,low,Fit amplitudes and phases to DFT stacking-energy grid or SHG+ULF inversion
+free_energy,switching_barrier,positive dimensionless,text,model,extract_registry_barriers.m,to_calibrate,low,Replace straight-line proxy by NEB-calibrated barrier when available
+polarization,Tc,405,K,literature,Current model cites Wan et al. PRL 128 067601 2022,needs_verification,medium,Verify exact material system and extraction method before quantitative use
+raman,ULF_shear_low,13,cm^-1,literature,He et al. Nano Lett. 16 1404 2016 / arXiv 1512.00092,qualitative_anchor,medium,Use ULF Raman as high-weight registry constraint
+raman,ULF_shear_high,20,cm^-1,literature,He et al. Nano Lett. 16 1404 2016 / arXiv 1512.00092,qualitative_anchor,medium,Fit actual ULF mode frequencies for each sample thickness
+raman,HF_Raman_tensor,mode dependent,a.u.,model,default_res2_params.m,to_calibrate,low,Fit mode-specific Raman tensor from polarization-resolved Raman data
+raman,resonant_Raman_coupling,scalar,a.u.,model,default_res2_params.m,to_upgrade,low,Upgrade to exciton-branch-resolved resonance factor
+pl,X1_X2_peak_model,two branch,text,literature,ReS2 anisotropic exciton literature and current code,current,medium,Keep peak-resolved PL mandatory for anisotropic-exciton claims
+pl,X1_X2_resolvability,separation greater than linewidth,text,model_validation,V3 recommendation,to_implement,high,Warn when peak-resolved claim is not supported by linewidth
+shg,effective_chi_tensor,2x2x2,a.u.,model,default_res2_params.m,to_calibrate,low,Fit tensor components to polar SHG data or DFT nonlinear susceptibility
+transport,photocurrent_parity,odd/even/mixed,text,theory,Xiao et al. npj Comput Mater 8 138 2022 / arXiv 2201.04980,to_implement,high,Decompose switchable and unswitchable PV channels
+inversion,joint_loss_weights,manual,a.u.,model,main_demo_ReS2_sliding_theory.m,to_upgrade,medium,Prioritize ULF and SHG for registry and PL for excitonic readout
+validation,parameter_provenance_complete,not enforced,text,repository,validate_model_physics.m,to_implement,high,Block quantitative claim level if parameters lack provenance
