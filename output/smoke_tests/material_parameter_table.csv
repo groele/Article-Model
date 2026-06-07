@@ -1,0 +1,23 @@
+name,value,unit,source_level
+lattice_a,6.51,A,literature-guided default
+lattice_b,6.41,A,literature-guided default
+lattice_gamma,119,deg,literature-guided default
+unit_cell_area,36.4970932211906,A^2,literature-guided default
+monolayer_thickness,6.2,A,literature-guided default
+bilayer_spacing,6.2,A,literature-guided default
+direct_bandgap,1.55,eV,literature-guided default
+bandgap_min,1.5,eV,literature-guided default
+bandgap_max,1.6,eV,literature-guided default
+exciton_binding_X1,118,meV,literature-guided default
+exciton_binding_X2,83,meV,literature-guided default
+exciton_bohr_radius,1.5,nm,literature-guided default
+epsilon_inplane,7,relative,literature-guided default
+epsilon_out_of_plane,4,relative,literature-guided default
+hole_mass_chain,0.35,m0,literature-guided default
+hole_mass_transverse,1.4,m0,literature-guided default
+electron_mass_chain,0.45,m0,literature-guided default
+electron_mass_transverse,0.95,m0,literature-guided default
+AA_shear_ULF,13,cm^-1,literature-guided default
+AB_shear_ULF,20,cm^-1,literature-guided default
+default_polarization,0.12,uC/cm^2,literature-guided default
+default_coercive_field,330,kV/cm,literature-guided default

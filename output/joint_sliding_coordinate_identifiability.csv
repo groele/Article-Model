@@ -1,0 +1,3 @@
+state_id,ua_ci_low,ua_ci_high,ub_ci_low,ub_ci_high,raman_only_ua,raman_only_ub,pl_only_ua,pl_only_ub,confidence_delta
+1,-1.085,-0.945,-0.15,0.6,-1.05,0.09,-0.98,0.06,0.0002
+2,0.875,1.085,-0.3,0.09,1.015,0.06,1.015,-0.15,0.0002

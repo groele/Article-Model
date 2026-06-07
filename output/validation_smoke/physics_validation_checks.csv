@@ -1,0 +1,7 @@
+check_name,metric,passed,interpretation
+registry_state_count,4,1,At least four labeled registry states are exposed.
+registry_barrier_positive,0.0294968971555437,1,Straight-path barriers are positive.
+finite_sliding_path,1.21564316175024,1,Gradient descent returns finite states.
+polarization_switches,2.29666862099628,1,Field sweep changes Pz appreciably.
+kxy_limiting_case,0.106849680315859,1,kxy=0 limiting case remains bounded.
+high_temperature_small_signal,0.0801475343030014,1,Paraelectric high-T local model has small low-field Pz.

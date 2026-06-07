@@ -1,0 +1,6 @@
+name,value,unit,source,fit_status,confidence
+Tc,405,K,"Wan et al., Phys. Rev. Lett. 128, 067601 (2022)",literature anchor,medium
+ULF shear mode separation,13,cm^-1 scale,"He et al., arXiv:1512.00092 / Nano Lett. stacking Raman study",qualitative calibration,medium
+PL stacking shift,5,meV scale,"Fu et al., Nano Lett. 2026 optical imaging of interlayer sliding",qualitative calibration,medium
+doping coercive-field enhancement,870,kV/cm,"Liu et al., Phys. Rev. B 111, 104110 (2025)",literature anchor,medium
+multistate bilayer registry,4,states,"Ge et al., Phys. Rev. Applied 25, 044016 (2026)",qualitative calibration,low

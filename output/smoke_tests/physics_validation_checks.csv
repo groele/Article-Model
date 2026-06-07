@@ -1,0 +1,14 @@
+check_name,metric,passed,interpretation
+registry_state_count,4,1,At least four labeled registry states are exposed.
+registry_barrier_positive,0.0294968971555437,1,Straight-path barriers are positive.
+finite_sliding_path,1.21564316175024,1,Gradient descent returns finite states.
+polarization_switches,2.29666862099628,1,Field sweep changes Pz appreciably.
+kxy_limiting_case,0.106849680315859,1,kxy=0 limiting case remains bounded.
+high_temperature_small_signal,0.0801475343030014,1,Paraelectric high-T local model has small low-field Pz.
+analytic_gradient_check,6.95797877647841e-10,1,Analytic gradient agrees with finite-difference free-energy gradient.
+registry_periodicity,1.11022302462516e-15,1,Registry potential is invariant under integer model-coordinate translations.
+registry_minima_found,3,1,Grid scan finds multiple local registry minima.
+two_pl_peaks_resolved,15.7416149525593,1,PL readout keeps X1 and X2 as two resolved peaks.
+two_pl_axes_distinct,88.3470503902784,1,X1 and X2 retain distinct linear-polarization axes.
+material_lattice_area_positive,36.4970932211906,1,ReS2 triclinic in-plane unit-cell area is positive and physical.
+physical_polarization_scale,0.1098,1,Default physical Pz scale remains in a cautious sliding-ferroelectric range.
