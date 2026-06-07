@@ -6,18 +6,35 @@ function rr = resonant_raman_matrix_element_v6(E_laser_eV, ua, ub, p, modeId)
 %   M_m(E_L,u) = sum_j C_mj |e_in.d_j|^2 |e_out.d_j|^2 /
 %                [(E_L - E_j(u))^2 + Gamma_j^2]
 %
-% where j = X1, X2.  It is intended to connect registry-modulated excitonic
-% eigenstates to resonant Raman enhancement.
+% where j = X1, X2. It connects registry-modulated excitonic eigenstates to
+% resonant Raman enhancement. The function accepts either:
+%   - one registry point and many laser energies;
+%   - many registry points and one laser energy;
+%   - matched arrays of registry points and laser energies.
 
 if nargin < 5 || isempty(modeId)
     modeId = 1;
 end
+if nargin < 4 || isempty(p)
+    p = default_res2_params();
+end
+
 E_laser_eV = E_laser_eV(:);
 ua = ua(:);
 ub = ub(:);
-if numel(ua) == 1 && numel(E_laser_eV) > 1
-    ua = repmat(ua, size(E_laser_eV));
-    ub = repmat(ub, size(E_laser_eV));
+if numel(ua) ~= numel(ub)
+    error('ua and ub must contain the same number of elements.');
+end
+
+nE = numel(E_laser_eV);
+nu = numel(ua);
+if nu == 1 && nE > 1
+    ua = repmat(ua, nE, 1);
+    ub = repmat(ub, nE, 1);
+elseif nE == 1 && nu > 1
+    E_laser_eV = repmat(E_laser_eV, nu, 1);
+elseif nE ~= nu
+    error('E_laser_eV must be scalar or have the same length as ua/ub.');
 end
 
 n = numel(ua);
