@@ -8,7 +8,29 @@ u = (u_a, u_b)
 
 as the hidden structural order parameter connecting ferroelectric polarization, SHG, Raman/ultralow-frequency Raman, anisotropic excitonic PL, electrical transport, and photovoltaic response channels.
 
-The current version has evolved from a simple demonstration into a **symmetry-configurable, DFT-calibratable, kinetics-aware, exciton-phonon-coupled, multi-channel invertible registry framework**.
+The current version is a **symmetry-configurable, DFT-calibratable, kinetics-aware, exciton-phonon-coupled, multi-channel invertible registry framework**.
+
+---
+
+## 0. Executive summary
+
+The core physical statement of this repository is:
+
+```text
+interlayer registry u = (u_a,u_b)
+        -> symmetry breaking and out-of-plane polarization P_z(u)
+        -> registry-dependent phonon, exciton, SHG, Raman, PL, transport, and PV responses
+        -> multi-channel inversion of the hidden registry state
+```
+
+The most important claim boundary is:
+
+```text
+The default code is a symmetry-constrained phenomenological framework.
+It becomes semi-quantitative only after DFT/NEB or same-device experimental calibration.
+```
+
+The strongest intended use is as a **paper/SI theory scaffold** for explaining why several observables should co-vary with the same sliding-registry coordinate.  The default parameters should not be cited as material constants.
 
 ---
 
@@ -30,17 +52,35 @@ The repository can be used to:
 
 ---
 
-## 2. Claim boundary
+## 2. Claim boundary and reliability levels
 
 This repository is intentionally conservative about physical claims.
 
-### Safe claim
+### Level 1: robust conceptual claim
 
-The default model is a registry-resolved, symmetry-constrained phenomenological framework for testing whether multiple optical and electrical responses can be interpreted as readouts of the same hidden interlayer sliding coordinate.
+```text
+A bilayer stacking/sliding coordinate can act as a structural order parameter that controls multiple optical and electrical observables.
+```
 
-### Conditional claim
+This claim is consistent with general bilayer stacking ferroelectricity theory and with ultralow-frequency Raman evidence that ReS2 layers are coupled and stacked in an ordered manner.
 
-The model can become semi-quantitative or quasi-quantitative after replacing default parameters with:
+### Level 2: model-level claim
+
+```text
+A symmetry-adapted 2D registry coordinate u=(u_a,u_b) provides a more falsifiable explanation than a scalar-P-only model when several observables are fitted simultaneously.
+```
+
+This is tested by:
+
+```text
+scalar-P model vs 1D sliding model vs 2D registry model
+```
+
+using RMSE, AIC, BIC, and leave-one-channel-out registry inversion.
+
+### Level 3: conditional semi-quantitative claim
+
+The model can become semi-quantitative after replacing default parameters with:
 
 - DFT stacking-energy surface `U_reg(u_a,u_b)`;
 - Berry-phase polarization `P_z(u_a,u_b)`;
@@ -49,9 +89,18 @@ The model can become semi-quantitative or quasi-quantitative after replacing def
 - sweep-rate-dependent hysteresis data;
 - excitation-energy-dependent resonant Raman data.
 
-### Unsafe claim without calibration
+### Level 4: unsafe claim without calibration
 
-Do **not** use the default parameters as predictive material constants for coercive field, switching barrier, absolute polarization, Raman intensity, photocurrent magnitude, or exciton energy shifts.
+Do **not** use the default parameters as predictive material constants for:
+
+- coercive field;
+- switching barrier;
+- absolute polarization;
+- Raman intensity;
+- SHG susceptibility;
+- photocurrent magnitude;
+- exciton energy shifts;
+- attempt frequency or switching time.
 
 ---
 
@@ -177,7 +226,7 @@ output/code_health/code_health_checks.csv
 
 ## 6. Model evolution: V1 to V6
 
-### V1: Sliding-coordinate Raman/PL demo
+### V1: sliding-coordinate Raman/PL demo
 
 Core idea:
 
@@ -187,7 +236,7 @@ u_a, u_b -> Raman / PL observables
 
 The early model demonstrated that sliding coordinates can modulate Raman polar plots and excitonic PL response.
 
-### V2: Registry-resolved bilayer response
+### V2: registry-resolved bilayer response
 
 Added:
 
@@ -199,7 +248,7 @@ Added:
 - transport/PV proxies;
 - material constants and physical-unit conversion.
 
-### V3: Research-guided claim gates
+### V3: research-guided claim gates
 
 Added:
 
@@ -215,7 +264,7 @@ Important file:
 functions/apply_research_guided_v3_constraints.m
 ```
 
-### V4: Symmetry-adapted registry theory
+### V4: symmetry-adapted registry theory
 
 Added:
 
@@ -265,7 +314,7 @@ functions/leave_one_channel_out_test.m
 scripts/run_v5_model_audit.m
 ```
 
-### V6: Kinetics-aware and exciton-phonon-coupled framework
+### V6: kinetics-aware and exciton-phonon-coupled framework
 
 Added:
 
@@ -292,9 +341,9 @@ scripts/run_code_health_checks.m
 
 ---
 
-## 7. Physical model layers
+## 7. Theory logic: from registry to observables
 
-### 7.1 Registry coordinate
+### 7.1 Structural coordinate
 
 The hidden structural coordinate is:
 
@@ -314,7 +363,65 @@ p.units.u_a_period_A
 p.units.u_b_period_A
 ```
 
-### 7.2 Free energy
+### 7.2 Polar-state operation
+
+The polar partner of a registry state is written as:
+
+```text
+u_partner = M u + t
+```
+
+where:
+
+- `M` is a 2-by-2 operation matrix in registry-coordinate space;
+- `t` is a possible registry translation offset;
+- the default is `M = -I`, `t = 0`.
+
+The default `u -> -u` operation is a placeholder.  For quantitative ReS2-specific claims, replace it with the actual operation connecting relaxed positive and negative polar stackings.
+
+Implementation:
+
+```text
+functions/default_res2_symmetry_config.m
+functions/identify_polar_partner_registry.m
+functions/check_polar_state_operation.m
+```
+
+### 7.3 Symmetry-adapted basis
+
+Observables are expanded in basis functions:
+
+```text
+O(u) = sum_i c_i phi_i(u)
+```
+
+Each basis function is classified by comparing `phi_i(u_partner)` with `phi_i(u)`:
+
+```text
+odd:   phi_i(u_partner) ≈ -phi_i(u)
+even:  phi_i(u_partner) ≈  phi_i(u)
+mixed: neither purely odd nor purely even
+```
+
+Interpretation:
+
+```text
+odd   -> candidate switchable ferroelectric-like response
+even  -> stacking-sensitive but not switched by polarization reversal
+mixed -> requires additional symmetry or calibration analysis
+```
+
+Implementation:
+
+```text
+functions/symmetry_adapted_registry_basis.m
+```
+
+---
+
+## 8. Core equations
+
+### 8.1 Free-energy hierarchy
 
 The recommended V4/V5/V6 free-energy hierarchy is:
 
@@ -334,9 +441,17 @@ F = U_local + w U_registry - E_z P_z
 
 where `U_registry` is a Fourier-like periodic registry surface.
 
-### 7.3 Polarization
+A generic periodic registry expansion has the form:
 
-The original model uses:
+```text
+U_reg(u) = c0 + sum_i [a_i cos(2π G_i · u) + b_i sin(2π G_i · u)]
+```
+
+where `G_i` are reciprocal vectors in the model registry-coordinate space.
+
+### 8.2 Polarization model
+
+The original local model uses:
 
 ```text
 P_z = p1a u_a + p1b u_b + p3a u_a^3
@@ -348,70 +463,76 @@ The V4/V6 model extends this to:
 P_z(u) = P_Landau(u) + P_Berry-like(u) + P_charge-transfer(u)
 ```
 
-This is implemented in:
+where:
 
 ```text
-functions/sliding_polarization_v4.m
+P_Landau        -> local odd sliding-channel component
+P_Berry-like    -> registry-periodic Berry-phase-like contribution
+P_charge-transfer -> interlayer charge-transfer proxy
 ```
-
-Interpretation:
-
-- `P_Landau`: local odd sliding-channel component;
-- `P_Berry-like`: registry-periodic Berry-phase-like contribution;
-- `P_charge-transfer`: interlayer charge-transfer proxy.
 
 Only calibrated Berry-phase DFT or electrostatic data can make this quantitatively predictive.
 
-### 7.4 Symmetry and parity
+### 8.3 DFT-calibrated polarization fitting
 
-V5 uses an explicit polar-state operation:
-
-```text
-u_partner = M*u + t
-```
-
-Default:
-
-```matlab
-sym.M = -eye(2);
-sym.t = [0;0];
-```
-
-This default is a placeholder.  For quantitative ReS2-specific claims, replace it with the actual transformation connecting the relaxed positive and negative polar stacking registries.
-
-Parity classes:
+If Berry-phase DFT data are available:
 
 ```text
-odd   -> may represent switchable ferroelectric-like response
-even  -> stacking-sensitive but not switchable by polarization reversal
-mixed -> cannot be assigned without further symmetry/calibration analysis
+P_z^DFT(u_k) = known at sampled registry points u_k
 ```
 
-### 7.5 Raman and ULF Raman
-
-High-frequency Raman is treated through registry-dependent Raman tensors.
-
-ULF Raman is treated as a stronger registry fingerprint because interlayer shear and breathing modes are directly sensitive to stacking order.
-
-### 7.6 Resonant Raman and exciton-phonon coupling
-
-V6 adds branch-resolved resonant Raman:
+then the model fits:
 
 ```text
-M_m(E_L,u) = sum_j C_mj |e_in · d_j(u)|^2 |e_out · d_j(u)|^2 /
-             [(E_L - E_j(u))^2 + Gamma_j^2]
+P_z^fit(u) = sum_i c_i phi_i^odd(u)
 ```
 
-where `j = X1, X2`.
-
-Implemented in:
+using symmetry-allowed odd basis terms.  The residual is:
 
 ```text
-functions/exciton_phonon_coupling_tensor.m
-functions/resonant_raman_matrix_element_v6.m
+epsilon_P(u_k) = P_z^DFT(u_k) - P_z^fit(u_k)
 ```
 
-### 7.7 Excitonic PL
+and the model reports RMSE and R2.
+
+### 8.4 Raman tensor response
+
+For a Raman mode `m`, the parallel-polarized Raman response is represented as:
+
+```text
+I_m(theta,u) ∝ |e(theta)^T R_m(u) e(theta)|^2 + background
+```
+
+where:
+
+- `R_m(u)` is a registry-dependent Raman tensor;
+- `e(theta)` is the optical polarization unit vector.
+
+### 8.5 ULF Raman registry fingerprint
+
+ULF Raman modes are modeled as registry-dependent shear/breathing frequencies:
+
+```text
+omega_ULF,m(u) = omega_m0 + Delta omega_m(u_a,u_b)
+```
+
+ULF Raman is assigned high weight in registry inversion because interlayer shear and breathing modes directly probe stacking order.
+
+### 8.6 SHG tensor response
+
+The effective SHG response is modeled through a registry-dependent nonlinear tensor:
+
+```text
+P_i(2ω,u) = epsilon0 sum_jk chi_ijk^(2)(u) E_j(ω) E_k(ω)
+```
+
+and the measured intensity proxy is:
+
+```text
+I_SHG(u) ∝ |e_out · chi^(2)(u) : e_in e_in|^2
+```
+
+### 8.7 Excitonic PL model
 
 The model keeps X1 and X2 as separate branches:
 
@@ -420,7 +541,7 @@ X1: E1, Gamma1, oscillator1, theta1, DOLP1
 X2: E2, Gamma2, oscillator2, theta2, DOLP2
 ```
 
-Peak-resolved interpretation requires:
+A peak-resolved PL interpretation requires:
 
 ```text
 |E_X2 - E_X1| > max(Gamma_X1, Gamma_X2)
@@ -428,7 +549,31 @@ Peak-resolved interpretation requires:
 
 If this is not satisfied, interpret only integrated PL.
 
-### 7.8 Transport and photovoltaic response
+### 8.8 Branch-resolved resonant Raman
+
+V6 adds a branch-resolved resonant Raman proxy:
+
+```text
+M_m(E_L,u) = sum_j C_mj |e_in · d_j(u)|^2 |e_out · d_j(u)|^2 /
+             [(E_L - E_j(u))^2 + Gamma_j^2]
+```
+
+where:
+
+```text
+j = X1, X2
+E_L = laser excitation energy
+E_j(u) = exciton energy of branch j
+Gamma_j = linewidth of branch j
+```
+
+The Raman intensity proxy is:
+
+```text
+I_m^res(E_L,u) ∝ |M_m(E_L,u)|^2
+```
+
+### 8.9 Transport and photovoltaic response
 
 V4/V6 decomposes current into parity channels:
 
@@ -443,28 +588,35 @@ J_total
 
 Only odd candidate terms can be discussed as switchable by ferroelectric reversal, and only after calibration.
 
-### 7.9 Switching kinetics
+This decomposition is important because sliding-ferroelectric BPVE theory predicts that not all photocurrent tensor elements need to reverse under ferroelectric switching.
+
+### 8.10 Switching kinetics
 
 V6 adds a Kramers-like switching proxy:
 
 ```text
-Gamma(E,T) = f0 exp[-DeltaF(E)/(kBT)]
+Gamma(E,T) = f0 exp[-DeltaF(E)/(kB T)]
 ```
 
-Implemented in:
+where:
+
+- `f0` is an attempt frequency;
+- `DeltaF(E)` is a field-lowered switching barrier;
+- `T` is temperature.
+
+The switching probability over a time step `dt` is approximated as:
 
 ```text
-functions/switching_rate_kramers_model.m
-functions/simulate_rate_dependent_hysteresis.m
+P_switch = 1 - exp[-Gamma(E,T) dt]
 ```
 
 This is a kinetic proxy unless NEB barriers and attempt frequencies are calibrated.
 
 ---
 
-## 8. Calibration data formats
+## 9. Calibration data formats
 
-### 8.1 DFT registry-grid template
+### 9.1 DFT registry-grid template
 
 File:
 
@@ -500,7 +652,7 @@ energyFit = fit_registry_fourier_from_dft(dft, p);
 polarFit = fit_polarization_from_berry_dft(dft, p);
 ```
 
-### 8.2 NEB switching-path template
+### 9.2 NEB switching-path template
 
 File:
 
@@ -537,7 +689,110 @@ neb = import_neb_barrier_path('data/neb_barrier_path_template.csv');
 
 ---
 
-## 9. Important outputs
+## 10. Model verification logic
+
+### 10.1 Physics validation
+
+The default validation checks:
+
+```text
+registry state count
+positive registry barriers
+finite sliding paths
+polarization switching range
+high-temperature paraelectric limiting case
+gradient finite-difference agreement
+registry periodicity
+multiple local minima
+two PL peaks resolved
+X1/X2 polarization axes distinct
+physical scaling sanity checks
+```
+
+Run:
+
+```matlab
+validate_model_physics(p, fullfile(pwd,'output','validation'))
+```
+
+### 10.2 V4 validation
+
+V4 checks:
+
+```text
+Pz oddness under polar-partner operation
+availability of odd basis functions
+ULF Raman registry sensitivity
+X1/X2 PL resolvability
+photocurrent parity decomposition
+quantitative claim gate
+```
+
+Run:
+
+```matlab
+validate_model_v4(p, fullfile(pwd,'output','validation_v4'))
+```
+
+### 10.3 V5 ablation and inversion
+
+V5 compares:
+
+```text
+Model A: scalar P only
+Model B: 1D sliding u_a only
+Model C: full 2D registry u_a,u_b
+```
+
+using:
+
+```text
+RMSE, R2, AIC, BIC
+```
+
+V5 also performs joint registry inversion:
+
+```text
+u* = argmin_u Loss_total(u)
+```
+
+where:
+
+```text
+Loss_total(u)
+  = w_SHG Loss_SHG(u)
+  + w_ULF Loss_ULF(u)
+  + w_Raman Loss_Raman(u)
+  + w_PL Loss_PL(u)
+  + w_IV Loss_IV(u)
+```
+
+The confidence basin is estimated from:
+
+```text
+Delta Loss(u) = Loss(u) - Loss(u*)
+```
+
+with a default two-parameter 1-sigma-like contour:
+
+```text
+Delta Loss <= 2.30
+```
+
+### 10.4 V6 diagnostics
+
+V6 adds:
+
+```text
+resonant Raman excitation profile
+rate-dependent hysteresis
+parameter sensitivity ranking
+manuscript-style theory figures
+```
+
+---
+
+## 11. Important outputs
 
 ### Original model outputs
 
@@ -590,9 +845,9 @@ output/figures_v6/FigT6_parameter_sensitivity.png
 
 ---
 
-## 10. Common workflows
+## 12. Common workflows
 
-### 10.1 Check polar-state operation
+### 12.1 Check polar-state operation
 
 ```matlab
 p = default_res2_params();
@@ -600,7 +855,7 @@ p.symmetry.polarOperation = default_res2_symmetry_config();
 check = check_polar_state_operation(p, fullfile(pwd,'output','validation_v5'));
 ```
 
-### 10.2 Fit registry energy from DFT
+### 12.2 Fit registry energy from DFT
 
 ```matlab
 p = default_res2_params();
@@ -608,7 +863,7 @@ dft = load_dft_registry_grid('data/dft_registry_grid_template.csv');
 fit = fit_registry_fourier_from_dft(dft, p);
 ```
 
-### 10.3 Fit Berry-phase polarization
+### 12.3 Fit Berry-phase polarization
 
 ```matlab
 p = default_res2_params();
@@ -616,20 +871,20 @@ dft = load_dft_registry_grid('data/dft_registry_grid_template.csv');
 fitP = fit_polarization_from_berry_dft(dft, p);
 ```
 
-### 10.4 Import NEB barrier
+### 12.4 Import NEB barrier
 
 ```matlab
 neb = import_neb_barrier_path('data/neb_barrier_path_template.csv');
 ```
 
-### 10.5 Compare scalar-P and 2D-registry models
+### 12.5 Compare scalar-P and 2D-registry models
 
 ```matlab
 p = default_res2_params();
 result = run_ablation_scalarP_vs_registry2D(p, fullfile(pwd,'output','ablation_v5'));
 ```
 
-### 10.6 Invert hidden registry from target observables
+### 12.6 Invert hidden registry from target observables
 
 ```matlab
 p = default_res2_params();
@@ -649,7 +904,7 @@ inv = joint_registry_inversion_grid(target, p);
 loo = leave_one_channel_out_test(target, p);
 ```
 
-### 10.7 Simulate resonant Raman profile
+### 12.7 Simulate resonant Raman profile
 
 ```matlab
 p = default_res2_params();
@@ -658,7 +913,7 @@ E = linspace(1.42, 1.70, 240)';
 rr = resonant_raman_matrix_element_v6(E, states.ua(1), states.ub(1), p, 1);
 ```
 
-### 10.8 Simulate rate-dependent switching
+### 12.8 Simulate rate-dependent switching
 
 ```matlab
 p = default_res2_params();
@@ -669,7 +924,7 @@ sweep.T_K = 300;
 sim = simulate_rate_dependent_hysteresis(p, 50, sweep, struct());
 ```
 
-### 10.9 Generate manuscript-style theory figures
+### 12.9 Generate manuscript-style theory figures
 
 ```matlab
 make_manuscript_theory_figures_v6
@@ -677,7 +932,7 @@ make_manuscript_theory_figures_v6
 
 ---
 
-## 11. Code health and debugging
+## 13. Code health and debugging
 
 Run:
 
@@ -710,7 +965,7 @@ If any check fails, inspect the `message` column.
 
 ---
 
-## 12. Known limitations
+## 14. Known limitations
 
 1. The default polar-state operation `u -> -u` is a placeholder.  Replace it with the actual crystallographic operation for quantitative ReS2-specific claims.
 2. The default Fourier registry potential is not a DFT energy surface.
@@ -720,15 +975,123 @@ If any check fails, inspect the `message` column.
 6. Kramers-like switching kinetics require calibrated NEB barriers and attempt frequencies.
 7. Exciton-phonon coupling and resonant Raman profiles require excitation-energy-dependent Raman calibration.
 8. The generated manuscript figures are diagnostic by default; regenerate them after replacing template data with real data.
+9. Some project-local ReS2-specific bibliography entries in older internal notes should be rechecked against journal pages before manuscript citation.
 
 ---
 
-## 13. Recommended paper positioning
+## 15. Literature and reliability map
+
+This section separates literature-supported principles from project-local assumptions.  Use it to decide which claims are safe in a manuscript.
+
+### 15.1 General bilayer stacking ferroelectricity
+
+Supports:
+
+```text
+bilayer stacking/translation can create ferroelectricity;
+registry should be treated as the structural order parameter;
+polar-state operations should be defined by symmetry, not by arbitrary scalar P.
+```
+
+Representative reference:
+
+- Ji, Xu, and Xiang, General Theory for Bilayer Stacking Ferroelectricity, Phys. Rev. Lett. 130, 146801 (2023); arXiv:2210.16542.
+
+Model connection:
+
+```text
+u = (u_a,u_b)
+P_z = P_z(u)
+u_partner = M u + t
+```
+
+### 15.2 ReS2 interlayer coupling and ULF Raman
+
+Supports:
+
+```text
+bilayer/few-layer ReS2 has interlayer shear and breathing modes;
+ULF Raman can reveal coupling and stacking order;
+ULF Raman is an appropriate high-weight registry fingerprint.
+```
+
+Representative reference:
+
+- He et al., Coupling and stacking order of ReS2 atomic layers revealed by ultralow-frequency Raman spectroscopy, Nano Lett. 16, 1404 (2016); arXiv:1512.00092.
+
+Model connection:
+
+```text
+omega_ULF,m(u) = omega_m0 + Delta omega_m(u_a,u_b)
+```
+
+### 15.3 Anisotropic excitons and resonant Raman in ReS2
+
+Supports:
+
+```text
+ReS2 has anisotropic excitonic optical responses;
+resonant Raman can be strongly enhanced near excitonic transitions;
+branch-resolved X1/X2 Raman enhancement is a physically motivated modeling strategy.
+```
+
+Representative references:
+
+- Das et al., Giant Resonance Raman Scattering via Anisotropic Excitons in ReS2, arXiv:2507.15327.
+- Chowdhury et al., Robust coherent dynamics of homogeneously limited anisotropic excitons in two-dimensional layered ReS2, arXiv:2411.13695.
+
+Model connection:
+
+```text
+M_m(E_L,u) = sum_j C_mj |e_in · d_j(u)|^2 |e_out · d_j(u)|^2 / [(E_L - E_j(u))^2 + Gamma_j^2]
+```
+
+### 15.4 Sliding-ferroelectric BPVE symmetry
+
+Supports:
+
+```text
+not every photocurrent component must reverse under ferroelectric switching;
+out-of-plane and in-plane BPVE components can have different switchability;
+photocurrent should be decomposed by parity before being called switchable.
+```
+
+Representative reference:
+
+- Xiao et al., Switchable and unswitchable bulk photovoltaic effect in two-dimensional interlayer-sliding ferroelectrics, npj Computational Materials 8, 138 (2022); arXiv:2201.04980.
+
+Model connection:
+
+```text
+J_total = J_dark_even + J_dark_odd + J_shift_out_odd + J_shift_in_even + J_shift_in_mixed
+```
+
+### 15.5 Project-local or provisional ReS2-specific anchors
+
+Some older internal notes and manifests mention specific ReS2 ferroelectric or photovoltaic papers.  Before using those exact bibliographic details in a manuscript, verify the final journal page, DOI, author list, volume, and page/article number.
+
+Recommended practice:
+
+```text
+If a paper is used to justify a numerical value, verify it against the journal page.
+If a paper is used only for qualitative motivation, mark it as a qualitative anchor.
+If a parameter is not fitted from the same sample or DFT geometry, do not call it quantitative.
+```
+
+---
+
+## 16. Manuscript-ready positioning
 
 Recommended wording:
 
 ```text
 We developed a symmetry-configurable, DFT-calibratable, and kinetics-aware registry framework in which the interlayer sliding vector serves as a hidden structural coordinate linking ferroelectric polarization, tensorial optical fingerprints, anisotropic excitonic emission, and parity-resolved transport/PV response channels.
+```
+
+More mechanism-focused wording:
+
+```text
+Within this framework, ferroelectric switching is represented as a transition between symmetry-related registry states.  The optical and electrical responses are not treated as independent empirical modulations, but as registry-dependent tensorial and excitonic readouts constrained by symmetry and multi-channel consistency.
 ```
 
 Conservative wording:
@@ -745,7 +1108,7 @@ The default model quantitatively proves the microscopic switching path.
 
 ---
 
-## 14. Suggested next steps
+## 17. Suggested next steps
 
 1. Replace `data/dft_registry_grid_template.csv` with converged DFT stacking-energy and Berry-phase polarization data.
 2. Replace `data/neb_barrier_path_template.csv` with actual NEB results.
@@ -754,9 +1117,10 @@ The default model quantitatively proves the microscopic switching path.
 5. Use `joint_registry_inversion_grid.m` and `leave_one_channel_out_test.m` to test multi-channel consistency.
 6. Use `parameter_sensitivity_analysis.m` to prioritize which parameters require DFT or experimental calibration.
 7. Regenerate `output/figures_v6/` for manuscript-ready theory figures.
+8. Replace provisional bibliography entries with final DOI-verified references before paper submission.
 
 ---
 
-## 15. Citation and attribution note
+## 18. Citation and attribution note
 
-This repository is a modeling scaffold.  When using it in a manuscript, cite the experimental and theoretical literature that anchors the specific physical claims, especially bilayer stacking ferroelectricity theory, ReS2 sliding ferroelectric experiments, ULF Raman studies, resonant Raman/exciton studies, and BPVE symmetry analysis.  The repository itself should be described as a calibration-ready phenomenological framework unless all key coefficients are replaced by calibrated values.
+This repository is a modeling scaffold.  When using it in a manuscript, cite the experimental and theoretical literature that anchors the specific physical claims, especially bilayer stacking ferroelectricity theory, ReS2 interlayer Raman studies, resonant Raman/exciton studies, and BPVE symmetry analysis.  The repository itself should be described as a calibration-ready phenomenological framework unless all key coefficients are replaced by calibrated values.
