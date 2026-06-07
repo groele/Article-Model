@@ -1,27 +1,44 @@
 function basis = symmetry_adapted_registry_basis(ua, ub, p)
 %SYMMETRY_ADAPTED_REGISTRY_BASIS Build registry basis functions with parity tags.
 %
-% The V4 model treats the interlayer registry vector u=(ua,ub) as the
+% The V4/V5/V6 model treats the interlayer registry vector u=(ua,ub) as the
 % structural order parameter.  Observables are expanded in basis functions
-% that are classified by their parity under the operation connecting the two
-% opposite polar states.  The default operation is u -> -u; users can replace
-% it by setting
+% classified by their parity under the operation connecting two opposite
+% polar states.
 %
-%   p.symmetry.polarTransformMatrix = [m11 m12; m21 m22]
+% The polar partner is evaluated through identify_polar_partner_registry when
+% available, so this function supports the full V5 operation
 %
-% This function is deliberately lightweight and works with the existing
-% dimensionless registry coordinates used by the repository.
+%   u_partner = M*u + t
+%
+% rather than only the older placeholder u -> -u.
 
 ua = ua(:);
 ub = ub(:);
-[uaP, ubP] = local_polar_partner(ua, ub, p);
+if numel(ua) ~= numel(ub)
+    error('ua and ub must contain the same number of elements.');
+end
+if nargin < 3 || isempty(p)
+    p = default_res2_params();
+end
+
+if exist('identify_polar_partner_registry', 'file') == 2
+    partner = identify_polar_partner_registry(ua, ub, p);
+    uaP = partner.ua;
+    ubP = partner.ub;
+    basis.polarOperation = partner.operation;
+    basis.polarOperationString = partner.operationString;
+else
+    [uaP, ubP] = local_polar_partner_fallback(ua, ub, p);
+    basis.polarOperationString = 'fallback u_partner = M*u';
+end
 
 basis.ua = ua;
 basis.ub = ub;
 basis.partner_ua = uaP;
 basis.partner_ub = ubP;
 
-% Low-order polynomial basis.  These terms are not forced to be periodic;
+% Low-order polynomial basis. These terms are not forced to be periodic;
 % they are useful for local Landau-like expansions near a sliding channel.
 B = [ ...
     ua, ...
@@ -100,7 +117,7 @@ basis.note = ['Use odd basis functions for ferroelectric Pz-like terms; ', ...
     'switchable observables.'];
 end
 
-function [uaP, ubP] = local_polar_partner(ua, ub, p)
+function [uaP, ubP] = local_polar_partner_fallback(ua, ub, p)
 M = -eye(2);
 if nargin >= 3 && isstruct(p) && isfield(p, 'symmetry') && ...
         isfield(p.symmetry, 'polarTransformMatrix')
